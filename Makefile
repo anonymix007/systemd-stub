@@ -12,11 +12,13 @@ ELF2EFI_PARAMS=--version-major=257 \
                --minimum-sections=45 \
                --copy-sections=.sbat,.sdmagic,.osrel
 
+UKIFY:=src/ukify/ukify.py
+
 CFLAGS=-mgeneral-regs-only \
        -fdiagnostics-color=always \
        -D_FILE_OFFSET_BITS=64 \
        -std=gnu11 \
-       -Os \
+       -O0 \
        -g \
        -fdiagnostics-show-option \
        -fno-common \
@@ -118,3 +120,6 @@ build/%.elf.stub: $(STUB_OBJ) build/libefi.a build/libfundamental.a
 build/%.efi.stub: build/%.elf.stub
 	python $(ELF2EFI) $(ELF2EFI_PARAMS) $< $@
 	@echo Built $@ successfully
+
+linux-%.efi: %.conf build/linux$(EFI_ARCH).efi.stub
+	python $(UKIFY) build --config $< --uname="${uname -r}" -o $@
