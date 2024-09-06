@@ -1,3 +1,8 @@
+CROSS_COMPILE?=
+CC=$(CROSS_COMPILE)gcc
+AR=$(CROSS_COMPILE)ar
+LD=$(CROSS_COMPILE)ld
+
 EFI_ARCH?=aa64
 SD_BOOT_EFI_PATH:=src/boot/efi
 SD_FUNDAMENTAL_PATH:=src/fundamental
@@ -55,8 +60,7 @@ LDFLAGS=-lgcc \
         -z max-page-size=4096 \
         -z noexecstack \
         -z relro \
-        -z separate-code \
-        -Wl,-z,nopack-relative-relocs
+        -z separate-code
 
 LIBEFI_FILES = chid.c \
                console.c \
