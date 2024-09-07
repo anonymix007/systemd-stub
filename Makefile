@@ -126,4 +126,4 @@ build/%.efi.stub: build/%.elf.stub
 	@echo Built $@ successfully
 
 linux-%.efi: %.conf build/linux$(EFI_ARCH).efi.stub
-	python $(UKIFY) build --config $< --uname="${uname -r}" -o $@
+	python $(UKIFY) build --config $< --uname="$(shell uname -r)" -o $@
