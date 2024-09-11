@@ -50,6 +50,52 @@ CFLAGS=-mgeneral-regs-only \
        -I$(SD_FUNDAMENTAL_PATH) \
        -I$(SD_BOOT_EFI_PATH)
 
+CFLAGS += \
+       -Wall \
+       -Winvalid-pch \
+       -Wextra \
+       -Werror \
+       -Wno-missing-field-initializers \
+       -Wno-unused-parameter \
+       -Wno-nonnull-compare \
+       -Warray-bounds \
+       -Warray-bounds=2 \
+       -Wdate-time \
+       -Wendif-labels \
+       -Werror=format=2 \
+       -Werror=format-signedness \
+       -Werror=implicit-function-declaration \
+       -Werror=implicit-int \
+       -Werror=incompatible-pointer-types \
+       -Werror=int-conversion \
+       -Werror=missing-declarations \
+       -Werror=missing-prototypes \
+       -Werror=overflow \
+       -Werror=override-init \
+       -Werror=return-type \
+       -Werror=shift-count-overflow \
+       -Werror=shift-overflow=2 \
+       -Werror=undef \
+       -Wfloat-equal \
+       -Wimplicit-fallthrough=5 \
+       -Winit-self \
+       -Wlogical-op \
+       -Wmissing-include-dirs \
+       -Wmissing-noreturn \
+       -Wnested-externs \
+       -Wold-style-definition \
+       -Wpointer-arith \
+       -Wredundant-decls \
+       -Wshadow \
+       -Wstrict-aliasing=2 \
+       -Wstrict-prototypes \
+       -Wsuggest-attribute=noreturn \
+       -Wunused-function \
+       -Wwrite-strings \
+       -Wzero-length-bounds \
+       -Wno-unused-result \
+       -Werror=shadow
+
 LDFLAGS=-lgcc \
         -nostdlib \
         -static-pie \
@@ -96,6 +142,7 @@ STUB_OBJ=$(addprefix build/,$(STUB_SRC:.c=.o))
 
 LIBFUNDAMENTAL_FILES=bootspec-fundamental.c \
                      efivars-fundamental.c \
+                     sha1-fundamental.c \
                      sha256-fundamental.c \
                      string-util-fundamental.c \
                      uki.c
