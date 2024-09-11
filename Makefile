@@ -142,6 +142,7 @@ STUB_SRC=$(addprefix $(SD_BOOT_EFI_PATH)/,$(STUB_FILES))
 STUB_OBJ=$(addprefix build/,$(STUB_SRC:.c=.o))
 
 LIBFUNDAMENTAL_FILES=bootspec-fundamental.c \
+                     chid-fundamental.c \
                      efivars-fundamental.c \
                      sha1-fundamental.c \
                      sha256-fundamental.c \
