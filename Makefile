@@ -4,7 +4,7 @@ AR=$(CROSS_COMPILE)ar
 LD=$(CROSS_COMPILE)ld
 
 EFI_ARCH?=aa64
-SD_BOOT_EFI_PATH:=src/boot/efi
+SD_BOOT_EFI_PATH:=src/boot
 SD_FUNDAMENTAL_PATH:=src/fundamental
 SD_TOOLS_PATH:=tools
 
