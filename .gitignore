@@ -1,2 +1,7 @@
 build/
 *.efi
+*.dtb
+vmlinu*
+cmdline
+hwids/
+*_cross.conf
