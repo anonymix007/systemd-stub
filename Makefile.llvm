@@ -1,0 +1,161 @@
+CC=clang
+AR=llvm-ar
+LD=lld-link
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+
+EFI_ARCH?=aa64
+TARGET?=aarch64-unknown-windows
+SD_BOOT_EFI_PATH:=src/boot
+SD_FUNDAMENTAL_PATH:=src/fundamental
+SD_TOOLS_PATH:=tools
+
+UKIFY:=src/ukify/ukify.py
+
+CFLAGS=-ffreestanding \
+       -MMD \
+       -mno-red-zone \
+       -std=gnu11 \
+	   -target $(TARGET) \
+       -mgeneral-regs-only \
+       -fdiagnostics-color=always \
+       -D_FILE_OFFSET_BITS=64 \
+       -std=gnu11 \
+       -O0 \
+       -g \
+       -fdiagnostics-show-option \
+       -fno-common \
+       -fstrict-flex-arrays=3 \
+       --param=ssp-buffer-size=4 \
+       -fno-strict-aliasing \
+       -fshort-wchar \
+       -mstack-protector-guard=global \
+       -fcf-protection=none \
+       -fno-asynchronous-unwind-tables \
+       -fno-exceptions \
+       -fno-unwind-tables \
+       -fno-sanitize=all \
+       -fvisibility=hidden \
+       -DSD_BOOT=1 \
+       -DEFI_MACHINE_TYPE_NAME="\"$(EFI_ARCH)\"" \
+       -include ../systemd/builddir/src/boot/efi/efi_config.h \
+       -I../systemd/builddir \
+       -I$(SD_FUNDAMENTAL_PATH) \
+       -I$(SD_BOOT_EFI_PATH)
+
+CFLAGS += \
+       -Wall \
+       -Winvalid-pch \
+       -Wextra \
+       -Wno-missing-field-initializers \
+       -Wno-unused-parameter \
+       -Warray-bounds \
+       -Wdate-time \
+       -Wendif-labels \
+       -Werror=format=2 \
+       -Werror=implicit-function-declaration \
+       -Werror=implicit-int \
+       -Werror=incompatible-pointer-types \
+       -Werror=int-conversion \
+       -Werror=missing-declarations \
+       -Werror=missing-prototypes \
+       -Werror=overflow \
+       -Werror=override-init \
+       -Werror=return-type \
+       -Werror=shift-count-overflow \
+       -Werror=undef \
+       -Wfloat-equal \
+       -Winit-self \
+       -Wmissing-include-dirs \
+       -Wmissing-noreturn \
+       -Wnested-externs \
+       -Wold-style-definition \
+       -Wpointer-arith \
+       -Wredundant-decls \
+       -Wshadow \
+       -Wstrict-aliasing=2 \
+       -Wstrict-prototypes \
+       -Wunused-function \
+       -Wwrite-strings \
+       -Wno-unused-result \
+       -Werror=shadow \
+       -Wno-gnu-variable-sized-type-not-at-end \
+       -Wno-unknown-warning-option \
+       -D__GNUC__=0
+
+LDFLAGS=-debug \
+        -version:257.0 \
+        -subsystem:efi_application,1.0 \
+        -entry:efi_main
+
+LIBEFI_FILES = chid.c \
+               console.c \
+               device-path-util.c \
+               devicetree.c \
+               drivers.c \
+               efi-string.c \
+               efivars.c \
+               export-vars.c \
+               graphics.c \
+               initrd.c \
+               log.c \
+               measure.c \
+               part-discovery.c \
+               pe.c \
+               random-seed.c \
+               secure-boot.c \
+               shim.c \
+               smbios.c \
+               ticks.c \
+               util.c \
+               vmm.c
+
+LIBEFI_SRC=$(addprefix $(SD_BOOT_EFI_PATH)/,$(LIBEFI_FILES))
+LIBEFI_OBJ=$(addprefix build/,$(LIBEFI_SRC:.c=.o))
+
+STUB_FILES=cpio.c \
+           linux.c \
+           splash.c \
+           stub.c
+
+STUB_SRC=$(addprefix $(SD_BOOT_EFI_PATH)/,$(STUB_FILES))
+STUB_OBJ=$(addprefix build/,$(STUB_SRC:.c=.o))
+
+LIBFUNDAMENTAL_FILES=bootspec-fundamental.c \
+                     chid-fundamental.c \
+                     efivars-fundamental.c \
+                     sha1-fundamental.c \
+                     sha256-fundamental.c \
+                     string-util-fundamental.c \
+                     uki.c
+
+LIBFUNDAMENTAL_SRC=$(addprefix $(SD_FUNDAMENTAL_PATH)/,$(LIBFUNDAMENTAL_FILES))
+LIBFUNDAMENTAL_OBJ=$(addprefix build/,$(LIBFUNDAMENTAL_SRC:.c=.o))
+
+all: build/linux$(EFI_ARCH).efi.stub
+
+build:
+	mkdir -p $@
+
+build/%.o: %.c
+	@ mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+build/libefi.a: $(LIBEFI_OBJ)
+	$(AR) rcs $@ $^
+
+build/libfundamental.a: $(LIBFUNDAMENTAL_OBJ)
+	$(AR) rcs $@ $^
+
+build/%.pe.stub: $(STUB_OBJ) build/libefi.a build/libfundamental.a
+	$(LD) -pdbaltpath:$@.pdb -out:$@ $^ $(LDFLAGS)
+	$(STRIP) --strip-all $@
+	for i in $(shell seq 1 46); do \
+	    $(OBJCOPY) --add-section=.dummy=/dev/null $@; \
+	done
+
+build/%.efi.stub: build/%.pe.stub
+	python stripsections.py --num-sections 6 $< $@
+
+linux-%.efi: %.conf build/linux$(EFI_ARCH).efi.stub
+	python $(UKIFY) build --config $< --uname="$(shell uname -r)" -o $@

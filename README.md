@@ -12,8 +12,48 @@ cd systemd
 meson setup -Dbootloader=enabled builddir
 meson compile -C builddir version.h
 cd ../systemd-stub
+```
+With GCC:
+```
 make EFI_ARCH=aa64 CROSS_COMPILE=aarch64-linux-gnu-
 ```
+Or with clang:
+```
+make EFI_ARCH=aa64 TARGET=aarch64-unknown-windows -f Makefile.llvm
+```
+Building with clang requires applying the following patch:
+```diff
+diff --git a/src/fundamental/macro-fundamental.h b/src/fundamental/macro-fundamental.h
+index 35758b5b18..469642be22 100644
+--- a/src/fundamental/macro-fundamental.h
++++ b/src/fundamental/macro-fundamental.h
+@@ -538,14 +538,22 @@ static inline uint64_t ALIGN_OFFSET_U64(uint64_t l, uint64_t ali) {
+         }
+ #endif
+
++#if __GNUC__ > 0
+ /* Declares an ELF read-only string section that does not occupy memory at runtime. */
+-#define DECLARE_NOALLOC_SECTION(name, text)   \
++#define DECLARE_NOALLOC_SECTION_SUFFIX(name, text, ...)   \
+         asm(".pushsection " name ",\"S\"\n\t" \
+             ".ascii " STRINGIFY(text) "\n\t"  \
+             ".popsection\n")
++#else
++#define DECLARE_NOALLOC_SECTION_SUFFIX(name, text, suffix)   \
++    __attribute__((section(name))) __attribute__((__used__)) static const char __static_section_content_##suffix[] = text;
++#endif
++
++#define DECLARE_NOALLOC_SECTION(name, text) \
++    DECLARE_NOALLOC_SECTION_SUFFIX(name, text, unknown)
+
+ #ifdef SBAT_DISTRO
+-        #define DECLARE_SBAT(text) DECLARE_NOALLOC_SECTION(".sbat", text)
++        #define DECLARE_SBAT(text) DECLARE_NOALLOC_SECTION_SUFFIX(".sbat", text, sbat)
+ #else
+         #define DECLARE_SBAT(text)
+ #endif
+```
+
 And then build UKI:
 ```console
 python src/ukify/ukify.py build --config x1e.conf -o linux-x1e.efi
