@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "LENOVO Flex 5G 14Q8CX05",
     "compatible": "lenovo,flex-5g",
     "hwids": [

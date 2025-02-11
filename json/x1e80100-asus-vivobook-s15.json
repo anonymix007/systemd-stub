@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "ASUSTeK COMPUTER INC. ASUS Vivobook S 15",
     "compatible": "asus,vivobook-s15",
     "hwids": [

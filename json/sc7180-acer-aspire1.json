@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "Acer Aspire 1",
     "compatible": "acer,aspire1",
     "hwids": [

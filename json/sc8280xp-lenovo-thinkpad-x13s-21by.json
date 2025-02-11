@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "LENOVO ThinkPad X13s Gen 1",
     "compatible": "lenovo,thinkpad-x13s",
     "hwids": [

@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "LENOVO YOGA C630-13Q50",
     "compatible": "lenovo,yoga-c630",
     "hwids": [

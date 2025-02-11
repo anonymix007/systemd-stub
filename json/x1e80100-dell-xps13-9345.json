@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "Dell Inc. XPS",
     "compatible": "dell,xps13-9345",
     "hwids": [

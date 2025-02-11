@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "LENOVO Yoga Slim 7 14Q8X9",
     "compatible": "lenovo,yoga-slim7x",
     "hwids": [

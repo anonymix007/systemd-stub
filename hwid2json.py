@@ -37,6 +37,7 @@ def parse_hwid_file(hwid_file: Path, inpath: Path, outpath: Path) -> None:
     compatible = data['Compatible']
 
     device = {
+        'type': 'devicetree',
         'name': name,
         'compatible': compatible,
         'hwids': guids,

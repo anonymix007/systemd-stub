@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "HP 103C_5335M8 HP OmniBook X",
     "compatible": "hp,omnibook-x14",
     "hwids": [

@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "Qualcomm SCP_HAMOA",
     "compatible": "qcom,x1e001de-devkit",
     "hwids": [

@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "LENOVO ThinkPad T14s Gen 6",
     "compatible": "lenovo,thinkpad-t14s",
     "hwids": [

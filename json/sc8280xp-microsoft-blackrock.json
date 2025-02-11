@@ -1,4 +1,5 @@
 {
+    "type": "devicetree",
     "name": "Microsoft Corporation Surface",
     "compatible": "microsoft,blackrock",
     "hwids": [
