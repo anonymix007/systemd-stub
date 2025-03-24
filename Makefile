@@ -45,7 +45,7 @@ CFLAGS=-mgeneral-regs-only \
        -fno-sanitize=all \
        -fvisibility=hidden \
        -fPIC \
-       -include ../systemd/builddir/src/boot/efi/efi_config.h \
+       -include ../systemd/builddir/src/boot/efi_config.h \
        -I../systemd/builddir \
        -I$(SD_FUNDAMENTAL_PATH) \
        -I$(SD_BOOT_EFI_PATH)
@@ -113,6 +113,8 @@ LIBEFI_FILES = chid.c \
                device-path-util.c \
                devicetree.c \
                drivers.c \
+               edid.c \
+               efi-firmware.c \
                efi-string.c \
                efivars.c \
                export-vars.c \
@@ -127,6 +129,7 @@ LIBEFI_FILES = chid.c \
                shim.c \
                smbios.c \
                ticks.c \
+               url-discovery.c \
                util.c \
                vmm.c
 
