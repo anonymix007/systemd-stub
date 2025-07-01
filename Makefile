@@ -9,7 +9,7 @@ SD_FUNDAMENTAL_PATH:=src/fundamental
 SD_TOOLS_PATH:=tools
 
 ELF2EFI:=$(SD_TOOLS_PATH)/elf2efi.py
-ELF2EFI_PARAMS=--version-major=257 \
+ELF2EFI_PARAMS=--version-major=258 \
                --version-minor=0 \
                --efi-major=1 \
                --efi-minor=1 \
@@ -47,6 +47,7 @@ CFLAGS=-mgeneral-regs-only \
        -fPIC \
        -include ../systemd/builddir/src/boot/efi_config.h \
        -I../systemd/builddir \
+       -I../systemd/builddir/src/version \
        -I$(SD_FUNDAMENTAL_PATH) \
        -I$(SD_BOOT_EFI_PATH)
 
@@ -146,6 +147,7 @@ STUB_OBJ=$(addprefix build/,$(STUB_SRC:.c=.o))
 
 LIBFUNDAMENTAL_FILES=bootspec-fundamental.c \
                      chid-fundamental.c \
+                     edid-fundamental.c \
                      efivars-fundamental.c \
                      sha1-fundamental.c \
                      sha256-fundamental.c \
