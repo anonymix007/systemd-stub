@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# SPDX-License-Identifier: 0BSD
 
 from uuid import UUID
 from pathlib import Path
